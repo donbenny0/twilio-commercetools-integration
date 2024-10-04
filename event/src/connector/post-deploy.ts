@@ -5,8 +5,8 @@ import { createApiRoot } from '../client/create.client';
 import { assertError, assertString } from '../utils/assert.utils';
 import { createOrderSubscription } from './actions';
 
-const CONNECT_GCP_TOPIC_NAME_KEY = process.env.CONNECT_GCP_TOPIC_NAME || 'CONNECT_GCP_TOPIC_NAME';
-const CONNECT_GCP_PROJECT_ID_KEY = process.env.CONNECT_GCP_PROJECT_ID || 'CONNECT_GCP_PROJECT_ID';
+const CONNECT_GCP_TOPIC_NAME_KEY = 'CONNECT_GCP_TOPIC_NAME';
+const CONNECT_GCP_PROJECT_ID_KEY = 'CONNECT_GCP_PROJECT_ID';
 
 async function postDeploy(properties: Map<string, unknown>): Promise<void> {
   const topicName = properties.get(CONNECT_GCP_TOPIC_NAME_KEY);
