@@ -3,7 +3,6 @@ coverage
 .terraform
 *.tfstate*
 *.tfvars
-
 .DS_Store
 .vscode
 build/

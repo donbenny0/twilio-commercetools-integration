@@ -12,7 +12,7 @@ import { errorMiddleware } from './middleware/error.middleware';
 import CustomError from './errors/custom.error';
 
 // Read env variables
-// readConfiguration();
+readConfiguration();
 
 // Create the express app
 const app: Express = express();
