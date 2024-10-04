@@ -1,6 +1,6 @@
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
-const CUSTOMER_CREATE_SUBSCRIPTION_KEY = 'myconnector-OrderSubscription';
+const ORDER_SUBSCRIPTION_KEY = 'oc-de-orders';
 
 export async function createOrderSubscription(apiRoot: ByProjectKeyRequestBuilder, topicName: string, projectId: string): Promise<void> {
   const {
@@ -9,7 +9,7 @@ export async function createOrderSubscription(apiRoot: ByProjectKeyRequestBuilde
     .subscriptions()
     .get({
       queryArgs: {
-        where: `key = "${CUSTOMER_CREATE_SUBSCRIPTION_KEY}"`,
+        where: `key = "${ORDER_SUBSCRIPTION_KEY}"`,
       },
     })
     .execute();
@@ -19,7 +19,7 @@ export async function createOrderSubscription(apiRoot: ByProjectKeyRequestBuilde
 
     await apiRoot
       .subscriptions()
-      .withKey({ key: CUSTOMER_CREATE_SUBSCRIPTION_KEY })
+      .withKey({ key: ORDER_SUBSCRIPTION_KEY })
       .delete({
         queryArgs: {
           version: subscription.version,
@@ -32,7 +32,7 @@ export async function createOrderSubscription(apiRoot: ByProjectKeyRequestBuilde
     .subscriptions()
     .post({
       body: {
-        key: CUSTOMER_CREATE_SUBSCRIPTION_KEY,
+        key: ORDER_SUBSCRIPTION_KEY,
         destination: {
           type: 'GoogleCloudPubSub',
           topic: topicName,
@@ -58,7 +58,7 @@ export async function deleteCustomerCreateSubscription(
     .subscriptions()
     .get({
       queryArgs: {
-        where: `key = "${CUSTOMER_CREATE_SUBSCRIPTION_KEY}"`,
+        where: `key = "${ORDER_SUBSCRIPTION_KEY}"`,
       },
     })
     .execute();
@@ -68,7 +68,7 @@ export async function deleteCustomerCreateSubscription(
 
     await apiRoot
       .subscriptions()
-      .withKey({ key: CUSTOMER_CREATE_SUBSCRIPTION_KEY })
+      .withKey({ key: ORDER_SUBSCRIPTION_KEY })
       .delete({
         queryArgs: {
           version: subscription.version,
