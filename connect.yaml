@@ -3,8 +3,8 @@ deployAs:
     applicationType: event
     endpoint: /event
     scripts:
-      postDeploy: npm install && npm build && npm run ct-connect-post-deploy
-      preUndeploy: npm install && npm build && npm run ct-connect-pre-undeploy
+      postDeploy: npm install && npm run build && npm run ct-connect-post-deploy
+      preUndeploy: npm install && npm run build && npm run ct-connect-pre-undeploy
     configuration:
       standardConfiguration:
         - key: CTP_REGION
