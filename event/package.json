@@ -31,23 +31,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
-  "jest": {
-    "clearMocks": true,
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "testRegex": "test.*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "src/**/*.(t|j)s"
-    ],
-    "coverageDirectory": "coverage",
-    "testEnvironment": "node"
-  },
+ 
   "dependencies": {
     "@commercetools-backend/loggers": "^21.19.0",
     "@commercetools/platform-sdk": "^4.1.0",
