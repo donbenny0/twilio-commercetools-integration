@@ -11,6 +11,10 @@ deployAs:
           description: commercetools Composable Commerce API region
           required: true
           default: "europe-west1.gcp"
+        - key: CONNECT_PROVIDER
+          description: Connect provider
+          required: true
+          default: "GCP"
       securedConfiguration:
         - key: CTP_PROJECT_KEY
           description: commercetools Composable Commerce project key
@@ -33,3 +37,4 @@ deployAs:
         - key: TWILIO_FROM_NUMBER
           description: Twilio from number
           required: true
+
