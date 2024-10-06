@@ -15,6 +15,12 @@ deployAs:
           description: Connect provider
           required: true
           default: "GCP"
+        - key : CONNECT_GCP_TOPIC_NAME
+          description: GCP Pub/Sub topic name
+          required: false
+        - key: CONNECT_GCP_PROJECT_ID
+          description: GCP project ID
+          required: false
       securedConfiguration:
         - key: CTP_PROJECT_KEY
           description: commercetools Composable Commerce project key
