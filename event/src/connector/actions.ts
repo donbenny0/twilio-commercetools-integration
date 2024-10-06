@@ -45,8 +45,8 @@ async function createSubscription(
         destination,
         messages: [
           {
-            resourceTypeId: 'order',
-            types: ['OrderStateChanged'],
+            resourceTypeId: 'customer',
+            types: ['CustomerCreated'],
           },
         ],
       },
