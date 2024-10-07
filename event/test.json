@@ -1,0 +1,35 @@
+{
+    "notificationType": "Message",
+    "projectKey": "electronics-ecom",
+    "id": "f51e2c11-1c54-4ede-a293-6865c212cc90",
+    "version": 1,
+    "sequenceNumber": 6,
+    "resource": {
+        "typeId": "order",
+        "id": "12a1c426-fdc9-4813-b0ee-bea16e7c5de9"
+    },
+    "resourceVersion": 6,
+    "resourceUserProvidedIdentifiers": {
+        "orderNumber": "2024-8-24-53306"
+    },
+    "type": "OrderStateChanged",
+    "orderId": "079f4058-fa87-47fb-aba7-6d46bc0b91ce",
+    "orderState": "Confirmed",
+    "oldOrderState": "Complete",
+    "createdAt": "2024-10-03T11:29:18.402Z",
+    "lastModifiedAt": "2024-10-03T11:29:18.402Z",
+    "createdBy": {
+        "isPlatformClient": true,
+        "user": {
+            "typeId": "user",
+            "id": "451f98c6-4796-444d-b7e3-9c1ee47d5d68"
+        }
+    },
+    "lastModifiedBy": {
+        "isPlatformClient": true,
+        "user": {
+            "typeId": "user",
+            "id": "451f98c6-4796-444d-b7e3-9c1ee47d5d68"
+        }
+    }
+}
