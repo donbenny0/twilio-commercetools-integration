@@ -1,7 +1,7 @@
 import { Address } from "@commercetools/platform-sdk";
 
-export type OrderInfo = {
-    shippingAddress: Address;
+export interface OrderInfo {
+    shippingAddress?: Address;
     products: Object;
     orderState: string
 }

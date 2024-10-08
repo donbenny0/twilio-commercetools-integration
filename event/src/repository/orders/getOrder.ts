@@ -1,6 +1,7 @@
 import { ClientResponse, Order } from '@commercetools/platform-sdk';
 import { createApiRoot } from '../../client/create.client';
-import { OrderInfo } from '../../types/order.types';
+import { OrderInfo } from '../../interfaces/order.interface';
+
 
 // Create the API root for making requests to the commercetools platform
 const apiRoot = createApiRoot();
@@ -18,46 +19,23 @@ export async function getOrder(orderId: string): Promise<OrderInfo> {
     if (!orderId) {
         throw new Error('Order ID is required to fetch the order.');
     }
+    
+    // Fetch the order by ID
+    const response = await apiRoot
+        .orders()
+        .withId({ ID: orderId })
+        .get()
+        .execute();
 
-    try {
-        // Fetch the order by ID
-        const response = await apiRoot
-            .orders()
-            .withId({ ID: orderId })
-            .get()
-            .execute();
+    const order = response.body;
 
-        // Ensure the response contains the order
-        if (!response || !response.body) {
-            throw new Error(`Order not found for ID: ${orderId}`);
-        }
+    // Structure the order response
+    const orderResponse: OrderInfo = {
+        shippingAddress: order.shippingAddress,
+        products: order.lineItems,
+        orderState: order.orderState
+    };
 
-        const order = response.body;
-
-        // Check if shippingAddress is not empty
-        if (!order.shippingAddress || Object.keys(order.shippingAddress).length === 0) {
-            throw new Error(`Shipping address is empty for order ID: ${orderId}`);
-        }
-
-        // Structure the order response
-        const orderResponse: OrderInfo = {
-            shippingAddress: order.shippingAddress,
-            products: order.lineItems,
-            orderState: order.orderState
-        };
-
-        return orderResponse;
-
-    } catch (error) {
-        // Log the error for better debugging
-        console.error(`Error fetching order with ID ${orderId}:`, error);
-
-        // Throw a more descriptive error
-        if (error instanceof Error) {
-            throw new Error(`Failed to fetch order with ID ${orderId}: ${error.message}`);
-        } else {
-            throw new Error(`Failed to fetch order with ID ${orderId}: Unknown error occurred.`);
-        }
-    }
+    return orderResponse;
 }
 

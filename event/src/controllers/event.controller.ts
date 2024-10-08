@@ -1,92 +1,57 @@
 import { Request, Response } from 'express';
-import { logger } from '../utils/logger.utils'; // Assuming this is your logger
-import twilio from 'twilio';
+import { logger } from '../utils/logger.utils';
 import * as dotenv from 'dotenv';
 import { getOrder } from '../repository/orders/getOrder';
-dotenv.config(); // Load environment variables from a .env file
+import { OrderInfo } from '../interfaces/order.interface';
+import { validateTwilioCredentials } from '../validators/controllers.validators';
+import { sendWhatsAppMessage } from '../utils/twilio.utils';
+import { decodeData } from '../utils/helpers.utils';
+dotenv.config();
 
-/**
- * Exposed event POST endpoint.
- * Receives the Pub/Sub message and works with it
- *
- * @param {Request} request The express request
- * @param {Response} response The express response
- * @returns
- */
 
-export const post = async (request: Request, response: Response) => {
+
+
+
+// Controller to handle POST requests
+export const post = async (request: Request, response: Response): Promise<Response> => {
   try {
 
-    // Receive the Pub/Sub message
     const pubSubMessage = request.body.message;
 
-    // For our example we will use the customer id as a var
-    // and the query the commercetools sdk with that info
-    const decodedData = pubSubMessage.data
-      ? Buffer.from(pubSubMessage.data, 'base64').toString().trim()
-      : undefined;
-
-    if (decodedData) {
-      const jsonData = JSON.parse(decodedData);
-
-      // Use environment variables for Twilio credentials
-      const accountSid = process.env.TWILIO_ACCOUNT_SID; // Default for debugging
-      const authToken = process.env.TWILIO_AUTH_TOKEN; // Default for debugging
-
-      if (!accountSid || !authToken) {
-        logger.error('Twilio credentials are missing.');
-        return response.status(500).json({ error: 'Twilio credentials are missing' });
-      }
-
-      const order = await getOrder(jsonData.orderId);
-      const toPhoneNumber = order.shippingAddress.mobile
-
-      const client = twilio(accountSid, authToken);
-
-      const message = await client.messages.create({
-        body: `Hi, ${order.shippingAddress.firstName} ${order.shippingAddress.lastName} your order has been confirmed`,
-        from: `whatsapp:${process.env.TWILIO_FROM_NUMBER}`,
-        to: `whatsapp:${toPhoneNumber}`,
-      });
-
-      // Log successful message response
-      logger.info('Message sent successfully:', { messageSid: message.sid });
-
-      // Respond with the message details
-      return response.status(200).json(message);
+    // Validate Twilio credentials
+    // if (!validateTwilioCredentials(accountSid, authToken)) {
+    //   return response.status(500).json({ error: 'Twilio credentials are missing' });
+    // }
+    
+    // Process Pub/Sub message
+    const pubSubDecodedData = decodeData(pubSubMessage);
+    if (!pubSubDecodedData) {
+      logger.error('Invalid Pub/Sub message data');
+      return response.status(400).json({ error: 'Invalid Pub/Sub message data' });
     }
 
+    // Fetch the order using commercetools
+    const order: OrderInfo | null = await getOrder(pubSubDecodedData.orderId);
+    if (!order) {
+      logger.error('Order not found:', { orderId: pubSubDecodedData.orderId });
+      return response.status(404).json({ error: 'Order not found' });
+    }
 
+    // Send WhatsApp message
+    const message = await sendWhatsAppMessage(order);
+    if (!message) {
+      logger.error('Failed to send WhatsApp message');
+      return response.status(500).json({ error: 'Failed to send WhatsApp message.' });
+    }
 
+    logger.info('Message sent successfully:', { messageSid: message.sid });
+    return response.status(200).json(message);
   } catch (error) {
-    // Debugging: Log the error with details
-    logger.error('Error sending WhatsApp message:', { error: error });
+    logger.error('Error sending WhatsApp message:', { error });
 
-    // Return an appropriate error response
     return response.status(500).json({
       error: 'Internal server error. Failed to send WhatsApp message.',
       details: error,
     });
   }
 };
-// export const post = async (request: Request, response: Response) => {
-//   try {
-
-//     const orderId: string = request.body.orderId;
-//     // console.log("Order ID",orderId);
-//     const orders = await getOrder(orderId);
-//     console.log(orders);
-
-//     response.json({ "message": orders })
-
-//   } catch (error) {
-//     // Debugging: Log the error with details
-//     logger.error('Error :', { error: error });
-
-//     // Return an appropriate error response
-//     return response.status(500).json({
-//       error: 'Internal server error',
-//       details: error,
-//     });
-//   }
-// };
