@@ -1,4 +1,3 @@
-
 export interface Config {
   clientId: string;
   clientSecret: string;
@@ -7,4 +6,3 @@ export interface Config {
   region: string;
   port: string;
 }
-

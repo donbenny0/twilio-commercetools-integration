@@ -4,8 +4,7 @@ import {
 } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
 
-const ORDER_SUBSCRIPTION_KEY =
-  'myconnector-orderSubscription';
+const ORDER_SUBSCRIPTION_KEY = 'myconnector-orderSubscription';
 
 export async function createGcpPubSubOrderSubscription(
   apiRoot: ByProjectKeyRequestBuilder,
@@ -19,7 +18,6 @@ export async function createGcpPubSubOrderSubscription(
   };
   await createSubscription(apiRoot, destination);
 }
-
 
 async function createSubscription(
   apiRoot: ByProjectKeyRequestBuilder,

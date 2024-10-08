@@ -1,7 +1,5 @@
-import { ClientResponse, Order } from '@commercetools/platform-sdk';
 import { createApiRoot } from '../../client/create.client';
 import { OrderInfo } from '../../interfaces/order.interface';
-
 
 // Create the API root for making requests to the commercetools platform
 const apiRoot = createApiRoot();
@@ -13,29 +11,27 @@ const apiRoot = createApiRoot();
  * @throws Will throw an error if the order ID is not provided or if the fetch operation fails.
  */
 
-
 export async function getOrder(orderId: string): Promise<OrderInfo> {
-    // Check if orderId is provided
-    if (!orderId) {
-        throw new Error('Order ID is required to fetch the order.');
-    }
-    
-    // Fetch the order by ID
-    const response = await apiRoot
-        .orders()
-        .withId({ ID: orderId })
-        .get()
-        .execute();
+  // Check if orderId is provided
+  if (!orderId) {
+    throw new Error('Order ID is required to fetch the order.');
+  }
 
-    const order = response.body;
+  // Fetch the order by ID
+  const response = await apiRoot
+    .orders()
+    .withId({ ID: orderId })
+    .get()
+    .execute();
 
-    // Structure the order response
-    const orderResponse: OrderInfo = {
-        shippingAddress: order.shippingAddress,
-        products: order.lineItems,
-        orderState: order.orderState
-    };
+  const order = response.body;
 
-    return orderResponse;
+  // Structure the order response
+  const orderResponse: OrderInfo = {
+    shippingAddress: order.shippingAddress,
+    products: order.lineItems,
+    orderState: order.orderState,
+  };
+
+  return orderResponse;
 }
-

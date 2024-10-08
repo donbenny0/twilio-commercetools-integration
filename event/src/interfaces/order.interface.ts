@@ -1,7 +1,7 @@
-import { Address } from "@commercetools/platform-sdk";
+import { Address, LineItem } from '@commercetools/platform-sdk';
 
 export interface OrderInfo {
     shippingAddress?: Address;
-    products: Object;
-    orderState: string
+    products: LineItem[];
+    orderState: string;
 }
