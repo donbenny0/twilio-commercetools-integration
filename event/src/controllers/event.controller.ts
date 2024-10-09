@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import { getOrder } from '../repository/orders/getOrder';
 import { OrderInfo } from '../interfaces/order.interface';
 import { sendWhatsAppMessage } from '../utils/twilio.utils';
-import { decodeData } from '../utils/helpers.utils';
+import { decodePubSubData } from '../utils/helpers.utils';
 import { PubSubDecodedData } from '../interfaces/pubsub.interface';
 dotenv.config();
 
@@ -16,36 +16,32 @@ export const post = async (
   try {
     const pubSubMessage = request.body.message;
 
-    // Validate Twilio credentials
-    // if (!validateTwilioCredentials(accountSid, authToken)) {
-    //   return response.status(500).json({ error: 'Twilio credentials are missing' });
-    // }
 
     // Process Pub/Sub message
-    const pubSubDecodedData: PubSubDecodedData | null = decodeData(pubSubMessage);
-    if (!pubSubDecodedData) {
-      logger.error('Invalid Pub/Sub message data');
-      return response.status(400).send();
+    const pubSubDecodedMessage: PubSubDecodedData | null = decodePubSubData(pubSubMessage);
+    if (!pubSubDecodedMessage) {
+      logger.error('Error decoding Pub/Sub message data. The data might be corrupted or in an invalid format.', { receivedMessage: pubSubMessage });
+      return response.status(400).send("Invalid Pub/Sub message data");
     }
 
     // Fetch the order using commercetools
-    const order: OrderInfo | null = await getOrder(pubSubDecodedData.orderId);
+    const order: OrderInfo | null = await getOrder(pubSubDecodedMessage.orderId);
     if (!order) {
-      logger.error('Order not found:', { orderId: pubSubDecodedData.orderId });
+      logger.error('Order not found in commercetools. Please verify if the orderId is valid and exists in the system.', { orderId: pubSubDecodedMessage.orderId });
       return response.status(404).send();
     }
 
     // Send WhatsApp message
     const message = await sendWhatsAppMessage(order);
     if (!message) {
-      logger.error('Failed to send WhatsApp message');
+      logger.error('Failed to send WhatsApp message. There might be an issue with the Twilio service or the provided credentials.', { orderId: pubSubDecodedMessage.orderId, customerPhoneNumber: order.shippingAddress?.mobile });
       return response.status(500).send('Failed to send WhatsApp message');
     }
 
-    logger.info('Message sent successfully:', { messageSid: message.sid });
+    logger.info('WhatsApp message sent successfully. The message has been delivered to the customer.');
     return response.status(200).send('Message sent successfully');
   } catch (error) {
-    logger.error('Internal server error', { error });
+    logger.error('Internal server error encountered while processing the request. Please check the server logs for more details.', error);
     return response.status(500).send('Internal server error');
   }
 };
