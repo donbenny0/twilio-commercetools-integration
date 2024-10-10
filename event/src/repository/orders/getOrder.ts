@@ -11,27 +11,29 @@ const apiRoot = createApiRoot();
  * @throws Will throw an error if the order ID is not provided or if the fetch operation fails.
  */
 
-export async function getOrder(orderId: string): Promise<OrderInfo> {
-  // Check if orderId is provided
+export async function getOrder(orderId: string): Promise<OrderInfo | null> {
   if (!orderId) {
-    throw new Error('Order ID is required to fetch the order.');
+    return null;
   }
+  try {
+    // Fetch the order by ID
+    const response = await apiRoot
+      .orders()
+      .withId({ ID: orderId })
+      .get()
+      .execute();
 
-  // Fetch the order by ID
-  const response = await apiRoot
-    .orders()
-    .withId({ ID: orderId })
-    .get()
-    .execute();
+    const order = response.body;
 
-  const order = response.body;
+    const orderResponse: OrderInfo = {
+      shippingAddress: order.shippingAddress,
+      products: order.lineItems,
+      orderState: order.orderState,
+    };
 
-  // Structure the order response
-  const orderResponse: OrderInfo = {
-    shippingAddress: order.shippingAddress,
-    products: order.lineItems,
-    orderState: order.orderState,
-  };
-
-  return orderResponse;
+    return orderResponse;
+  } catch (error) {
+    return null; // Returning null to handle this in the controller
+  }
 }
+

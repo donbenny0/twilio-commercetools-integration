@@ -27,8 +27,8 @@ export const post = async (
     // Fetch the order using commercetools
     const order: OrderInfo | null = await getOrder(pubSubDecodedMessage.orderId);
     if (!order) {
-      logger.error('Order not found in commercetools. Please verify if the orderId is valid and exists in the system.', { orderId: pubSubDecodedMessage.orderId });
-      return response.status(404).send();
+      logger.error('Order not found in commercetools or orderId is missing. Please verify if the orderId is valid and exists in the system.', { orderId: pubSubDecodedMessage.orderId });
+      return response.status(404).send("Order not found in commercetools or orderId is missing");
     }
 
     // Send WhatsApp message
