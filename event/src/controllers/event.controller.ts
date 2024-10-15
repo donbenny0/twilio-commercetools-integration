@@ -35,7 +35,7 @@ export const post = async (
     const message = await sendWhatsAppMessage(order);
     if (!message) {
       logger.error('Failed to send WhatsApp message. There might be an issue with the Twilio service or the provided credentials.', { orderId: pubSubDecodedMessage.orderId, customerPhoneNumber: order.shippingAddress?.mobile });
-      return response.status(500).send('Failed to send WhatsApp message');
+      return response.status(400).send('Failed to send WhatsApp message');
     }
 
     logger.info('WhatsApp message sent successfully. The message has been delivered to the customer.');
