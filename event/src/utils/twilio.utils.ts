@@ -13,7 +13,7 @@ const fromPhoneNumber: string | undefined = process.env.TWILIO_FROM_NUMBER;
 const client: Twilio = twilio(accountSid, authToken);
 
 // Send WhatsApp notification
-export const sendWhatsAppMessage = async (order: OrderInfo) => {
+export async function sendWhatsAppMessage(order: OrderInfo) {
     const toPhoneNumber = order.shippingAddress?.mobile;
     if (!toPhoneNumber || !(await validatePhoneNumber(toPhoneNumber))) {
         return null;
@@ -37,10 +37,10 @@ export const sendWhatsAppMessage = async (order: OrderInfo) => {
         logger.error(`Error sending WhatsApp message: ${error}`);
         return null;
     }
-};
+}
 
 
-const validatePhoneNumber = async (phoneNumber: string): Promise<boolean> => {
+export const validatePhoneNumber = async (phoneNumber: string): Promise<boolean> => {
     try {
         const validationResponse = await client.lookups.v2.phoneNumbers(phoneNumber).fetch();
         return validationResponse.valid;
