@@ -1,5 +1,5 @@
-import { OrderInfo } from "../../src/interfaces/order.interface";
-import sendWhatsAppMessage from "../../src/utils/twilio.utils";
+import { OrderInfo } from "../interfaces/order.interface";
+import sendWhatsAppMessage from "./twilio.utils";
 
 const whatsappValidResponse = {
     "account_sid": "ACaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
