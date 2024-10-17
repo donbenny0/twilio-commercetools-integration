@@ -3,7 +3,7 @@ import { logger } from '../utils/logger.utils';
 import * as dotenv from 'dotenv';
 import { getOrder } from '../repository/orders/getOrder';
 import { OrderInfo } from '../interfaces/order.interface';
-import { sendWhatsAppMessage } from '../utils/twilio.utils';
+import sendWhatsAppMessage from '../utils/twilio.utils';
 import { decodePubSubData } from '../utils/helpers.utils';
 import { PubSubDecodedData } from '../interfaces/pubsub.interface';
 dotenv.config();

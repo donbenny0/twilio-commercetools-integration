@@ -1,7 +1,0 @@
-
-{
-    "code": 21211,
-    "moreInfo": "https://www.twilio.com/docs/errors/21211",
-    "stack": "Error: The 'To' number whatsapp: is not a valid phone number.\n    at success (E:\\Ayata commerce\\Review\\order-pulse\\event\\node_modules\\twilio\\lib\\base\\Version.js:79:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)",
-    "status": 400
-}

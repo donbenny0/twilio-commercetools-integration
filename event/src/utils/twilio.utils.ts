@@ -9,11 +9,10 @@ const fromPhoneNumber: string | undefined = process.env.TWILIO_FROM_NUMBER;
 
 
 // create twilio client
-
 const client: Twilio = twilio(accountSid, authToken);
 
 // Send WhatsApp notification
-export async function sendWhatsAppMessage(order: OrderInfo) {
+const sendWhatsAppMessage = async (order: OrderInfo) => {
     const toPhoneNumber = order.shippingAddress?.mobile;
     if (!toPhoneNumber || !(await validatePhoneNumber(toPhoneNumber))) {
         return null;
@@ -29,9 +28,7 @@ export async function sendWhatsAppMessage(order: OrderInfo) {
             body: messageBody,
             from: `whatsapp:${fromPhoneNumber}`,
             to: `whatsapp:${toPhoneNumber}`,
-        });
-
-        logger.info(`Message sent successfully. SID: ${response.sid}`);
+        });;
         return response;
     } catch (error) {
         logger.error(`Error sending WhatsApp message: ${error}`);
@@ -39,8 +36,7 @@ export async function sendWhatsAppMessage(order: OrderInfo) {
     }
 }
 
-
-export const validatePhoneNumber = async (phoneNumber: string): Promise<boolean> => {
+ const validatePhoneNumber = async (phoneNumber: string): Promise<boolean> => {
     try {
         const validationResponse = await client.lookups.v2.phoneNumbers(phoneNumber).fetch();
         return validationResponse.valid;
@@ -50,3 +46,5 @@ export const validatePhoneNumber = async (phoneNumber: string): Promise<boolean>
     }
 };
 
+
+export default sendWhatsAppMessage;
