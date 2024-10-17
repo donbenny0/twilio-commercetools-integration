@@ -28,7 +28,7 @@ const sendWhatsAppMessage = async (order: OrderInfo) => {
             body: messageBody,
             from: `whatsapp:${fromPhoneNumber}`,
             to: `whatsapp:${toPhoneNumber}`,
-        });;
+        });
         return response;
     } catch (error) {
         logger.error(`Error sending WhatsApp message: ${error}`);

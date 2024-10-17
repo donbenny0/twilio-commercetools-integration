@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { logger } from './utils/logger.utils';
+
 import app from './app';
 
 const PORT = 8080;
