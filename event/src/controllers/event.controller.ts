@@ -9,6 +9,7 @@ import { PubSubDecodedData } from '../interfaces/pubsub.interface';
 dotenv.config();
 
 // Controller to handle POST requests
+
 export const post = async (
   request: Request,
   response: Response
@@ -19,9 +20,9 @@ export const post = async (
 
     // Process Pub/Sub message
     const pubSubDecodedMessage: PubSubDecodedData | null = decodePubSubData(pubSubMessage);
-    if (!pubSubDecodedMessage) {
-      logger.error('Error decoding Pub/Sub message data. The data might be corrupted or in an invalid format.', { receivedMessage: pubSubMessage });
-      return response.status(400).send("Invalid Pub/Sub message data");
+    if (!pubSubDecodedMessage || pubSubDecodedMessage.orderState !== "Confirmed") {
+      logger.error('Error decoding Pub/Sub message data. The data might be corrupted or in an invalid orderState.', { receivedMessage: pubSubMessage });
+      return response.status(400).send("Invalid Pub/Sub message data or invalid orderState");
     }
 
     // Fetch the order using commercetools
@@ -31,7 +32,7 @@ export const post = async (
       return response.status(404).send("Order not found in commercetools or orderId is missing");
     }
 
-    // Send WhatsApp message
+    // Send WhatsApp messagez
     const message = await sendWhatsAppMessage(order);
     if (!message) {
       logger.error('Failed to send WhatsApp message. There might be an issue with the Twilio service or the provided credentials.', { orderId: pubSubDecodedMessage.orderId, customerPhoneNumber: order.shippingAddress?.mobile });
