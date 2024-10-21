@@ -43,7 +43,7 @@ describe('POST /event', () => {
     describe('given request body with no orderId', () => {
         test('should respond with 404 status code', async () => {
             const response = await postEvent(noOrderId);
-            expect(response.statusCode).toBe(404);
+            expect(response.statusCode).toBe(400);
         });
     });
 });

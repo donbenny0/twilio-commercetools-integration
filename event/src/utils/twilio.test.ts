@@ -81,8 +81,6 @@ describe("twilio.utils", () => {
                 mobile: "+917306227380",
                 email: "sarah.williams@example.com"
             },
-            products: [],
-            orderState: "Confirmed"
         };
         const result = await sendWhatsAppMessage(order);
         expect(result).toEqual(whatsappValidResponse);
