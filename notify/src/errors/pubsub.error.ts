@@ -1,4 +1,4 @@
-import CustomError from '../errors/custom.error';
+import CustomError from './custom.error';
 
 // Error for when the Pub/Sub message is missing data
 export class MissingPubSubMessageDataError extends CustomError {

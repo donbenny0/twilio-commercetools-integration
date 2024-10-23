@@ -10,10 +10,7 @@ dotenv.config();
 
 
 
-export const post = async (
-  request: Request,
-  response: Response
-): Promise<Response> => {
+export const post = async (request: Request, response: Response): Promise<Response> => {
   try {
     const pubSubMessage = request.body.message;
 

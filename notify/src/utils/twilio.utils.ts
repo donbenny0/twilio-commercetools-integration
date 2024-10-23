@@ -1,21 +1,13 @@
 import twilio, { Twilio } from 'twilio';
 import { OrderInfo } from '../interfaces/order.interface';
 import { logger } from './logger.utils';
-import {
-    MissingTwilioConfigError,
-    PhoneNumberValidationError,
-    WhatsAppMessageSendError
-} from '../errors/twilio.error';
+import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../errors/twilio.error';
 
 // Twilio configuration
 const accountSid: string | undefined = process.env.TWILIO_ACCOUNT_SID;
 const authToken: string | undefined = process.env.TWILIO_AUTH_TOKEN;
 const fromPhoneNumber: string | undefined = process.env.TWILIO_FROM_NUMBER;
 
-// Check if Twilio config is missing
-if (!accountSid) throw new MissingTwilioConfigError('TWILIO_ACCOUNT_SID');
-if (!authToken) throw new MissingTwilioConfigError('TWILIO_AUTH_TOKEN');
-if (!fromPhoneNumber) throw new MissingTwilioConfigError('TWILIO_FROM_NUMBER');
 
 // Create Twilio client
 const client: Twilio = twilio(accountSid, authToken);
@@ -39,7 +31,7 @@ const sendWhatsAppMessage = async (order: OrderInfo) => {
             from: `whatsapp:${fromPhoneNumber}`,
             to: `whatsapp:${toPhoneNumber}`,
         });
-        
+
         logger.info('WhatsApp message sent successfully. The message has been delivered to the customer.');
         return response;
     } catch (error) {

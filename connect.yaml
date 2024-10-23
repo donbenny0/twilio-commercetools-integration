@@ -1,5 +1,5 @@
 deployAs:
-  - name: event
+  - name: notify
     applicationType: event
     endpoint: /event
     scripts:

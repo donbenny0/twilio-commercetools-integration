@@ -1,11 +1,5 @@
-import CustomError from '../errors/custom.error';
+import CustomError from './custom.error';
 
-// Error for missing Twilio configuration (e.g., account SID, auth token, phone number)
-export class MissingTwilioConfigError extends CustomError {
-  constructor(missingConfig: string) {
-    super(500, `Twilio configuration is missing: ${missingConfig}`);
-  }
-}
 
 // Error for phone number validation failure
 export class PhoneNumberValidationError extends CustomError {

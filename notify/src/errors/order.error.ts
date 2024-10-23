@@ -1,4 +1,4 @@
-import CustomError from '../errors/custom.error';
+import CustomError from './custom.error';
 
 // Custom error for when order ID is not provided
 export class MissingOrderIdError extends CustomError {
