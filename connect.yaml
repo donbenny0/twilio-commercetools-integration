@@ -11,6 +11,11 @@ deployAs:
           description: commercetools Composable Commerce API region
           required: true
           default: "europe-west1.gcp"
+        - key: CUSTOM_MESSAGE_TEMPLATE
+          description: custom message template
+          required: true
+          default: "Dear *{{shippingAddress.firstName}}*,\n\nThank you for your order! We're excited to let you know that your order has been confirmed. 🛒🎉\n\nWe'll notify you once it's shipped. Feel free to reach out if you have any questions.\n\nThank you for shopping with us!"
+
       securedConfiguration:
         - key: CTP_PROJECT_KEY
           description: commercetools Composable Commerce project key
