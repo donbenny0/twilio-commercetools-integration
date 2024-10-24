@@ -1,10 +1,6 @@
 import { PubSubDecodedData, PubSubEncodedMessage } from '../interfaces/pubsub.interface';
 import { logger } from './logger.utils';
-import {
-    MissingPubSubMessageDataError,
-    Base64DecodingError,
-    JsonParsingError
-} from '../errors/pubsub.error'; // Assuming custom errors are in 'pubsub.errors.ts'
+import { MissingPubSubMessageDataError, Base64DecodingError, JsonParsingError } from '../errors/pubsub.error';
 
 // Helper function to decode base64 and parse JSON
 const decodeAndParseData = (data: string): PubSubDecodedData => {
@@ -39,4 +35,20 @@ export const decodePubSubData = (pubSubMessage: PubSubEncodedMessage): PubSubDec
 
     // Decode and parse the data
     return decodeAndParseData(pubSubMessage.data);
+};
+
+// Generate custom messageBody
+export const generateMessage = (data: any): string => {
+    const template = process.env.CUSTOM_MESSAGE_TEMPLATE;
+    if (!template) return '';
+
+    const regex = /{{(.*?)}}/g;
+
+    return template.replace(regex, (_, path: string) => {
+        const value = path.trim()
+            .split('.')
+            .reduce<any>((obj, key) => obj?.[key], data);
+
+        return value ?? '';
+    });
 };

@@ -1,7 +1,8 @@
 import twilio, { Twilio } from 'twilio';
-import { OrderInfo } from '../interfaces/order.interface';
 import { logger } from './logger.utils';
 import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../errors/twilio.error';
+import { Order } from '@commercetools/platform-sdk';
+import { generateMessage } from './helpers.utils';
 
 // Twilio configuration
 const accountSid: string | undefined = process.env.TWILIO_ACCOUNT_SID;
@@ -13,17 +14,15 @@ const fromPhoneNumber: string | undefined = process.env.TWILIO_FROM_NUMBER;
 const client: Twilio = twilio(accountSid, authToken);
 
 // Send WhatsApp notification
-const sendWhatsAppMessage = async (order: OrderInfo) => {
+const sendWhatsAppMessage = async (order: Order) => {
     const toPhoneNumber = order.shippingAddress?.mobile;
     if (!toPhoneNumber || !(await validatePhoneNumber(toPhoneNumber))) {
         throw new PhoneNumberValidationError(toPhoneNumber || 'undefined');
     }
 
     try {
-        const firstName = order.shippingAddress?.firstName || 'Valued Customer';
-
         // Message body
-        const messageBody = `Dear *${firstName}*,\n\nThank you for your order! We're excited to let you know that your order has been confirmed. 🛒🎉\n\nWe'll notify you once it's shipped. Feel free to reach out if you have any questions.\n\nThank you for shopping with us!`;
+        const messageBody = generateMessage(order);
 
         // Send the message
         const response = await client.messages.create({
