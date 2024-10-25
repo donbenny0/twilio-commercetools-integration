@@ -1,9 +1,9 @@
 
-import { getOrder } from '../../src/repository/orders/getOrder.repository';
-import { OrderNotFoundError, FetchOrderError } from '../../src/errors/order.error';
+import { getOrder } from './getOrder.repository';
+import { OrderNotFoundError, FetchOrderError } from '../../errors/order.error';
 
 // Mock the entire module
-jest.mock('../../src/client/create.client', () => ({
+jest.mock('../../client/create.client', () => ({
     createApiRoot: jest.fn()
 }));
 
@@ -21,7 +21,7 @@ describe('getOrder.repository.ts', () => {
         const mockOrders = jest.fn().mockReturnValue({ withId: mockWithId });
 
         // Mock the createApiRoot function
-        require('../../src/client/create.client').createApiRoot.mockReturnValue({
+        require('../../client/create.client').createApiRoot.mockReturnValue({
             orders: mockOrders
         });
     });

@@ -1,5 +1,5 @@
-import { decodePubSubData, generateMessage } from '../../src/utils/helpers.utils';
-import { PubSubDecodedData } from '../../src/interfaces/pubsub.interface';
+import { decodePubSubData, generateMessage } from './helpers.utils';
+import { PubSubDecodedData } from '../interfaces/pubsub.interface';
 import { Order } from '@commercetools/platform-sdk';
 
 describe('helpers.utils.ts', () => {

@@ -1,5 +1,5 @@
-import sendWhatsAppMessage from '../../src/utils/twilio.utils';
-import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../../src/errors/twilio.error';
+import sendWhatsAppMessage from './twilio.utils';
+import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../errors/twilio.error';
 import { Order } from '@commercetools/platform-sdk';
 
 jest.mock('twilio', () => {
