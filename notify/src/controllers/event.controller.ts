@@ -26,10 +26,10 @@ export const post = async (request: Request, response: Response): Promise<Respon
     await sendWhatsAppMessage(order);
 
     return response.status(200).send('Message sent successfully');
-  } catch (error) {
+  } catch (error:any) {
     if (error instanceof CustomError) {
       throw error;
     }
-    throw new CustomError(500, 'Internal Server Error');
+    throw new CustomError(500, error);
   }
 };

@@ -2,7 +2,7 @@ import { PubSubDecodedData, PubSubEncodedMessage } from '../interfaces/pubsub.in
 import { logger } from './logger.utils';
 import { MissingPubSubMessageDataError, Base64DecodingError, JsonParsingError } from '../errors/pubsub.error';
 import { Order } from '@commercetools/platform-sdk';
-import { GeneralError, InvalidPlaceholder, MissingEnv } from '../errors/helpers.errors';
+import { GeneralError, InvalidPlaceholder } from '../errors/helpers.errors';
 import CustomError from '../errors/custom.error';
 
 // Helper function to decode base64 and parse JSON
@@ -42,13 +42,8 @@ export const decodePubSubData = (pubSubMessage: PubSubEncodedMessage): PubSubDec
 
 // Generate custom messageBody
 export const generateMessage = (data: Order): string => {
-    const template = process.env.CUSTOM_MESSAGE_TEMPLATE;
-
-    // Check if template is undefined
-    if (!template) {
-        logger.error("Error: CUSTOM_MESSAGE_TEMPLATE is not defined in the environment variables.");
-        throw new MissingEnv();
-    }
+    const defaultMessage = "Dear *{{shippingAddress.firstName}}*,\n\nThank you for your order! We're excited to let you know that your order has been confirmed. 🛒🎉\n\nWe'll notify you once it's shipped. Feel free to reach out if you have any questions.\n\nThank you for shopping with us!"
+    const template = process.env.CUSTOM_MESSAGE_TEMPLATE || defaultMessage;
 
     const extractValues = (obj: Order, pathString: string): any[] => {
         const segments: string[] = [];

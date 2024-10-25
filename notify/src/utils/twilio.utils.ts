@@ -35,7 +35,7 @@ const sendWhatsAppMessage = async (order: Order) => {
         return response;
     } catch (error) {
         logger.error(`Error sending WhatsApp message: ${error}`);
-        throw new WhatsAppMessageSendError(toPhoneNumber);
+        throw new WhatsAppMessageSendError(toPhoneNumber, error);
     }
 }
 

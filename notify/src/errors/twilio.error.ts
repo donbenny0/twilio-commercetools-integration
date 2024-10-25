@@ -10,7 +10,7 @@ export class PhoneNumberValidationError extends CustomError {
 
 // Error for when the WhatsApp message fails to send
 export class WhatsAppMessageSendError extends CustomError {
-  constructor(phoneNumber: string) {
-    super(500, `Failed to send WhatsApp message to: ${phoneNumber}`);
+  constructor(phoneNumber: string, error: any) {
+    super(500, `Failed to send WhatsApp message to: ${phoneNumber},${error}`);
   }
 }
