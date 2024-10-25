@@ -5,9 +5,8 @@ This connector is designed to automate real-time order status notifications for 
 ### Key Features:
 
 * Sends automated WhatsApp notifications to customers on order confirmation.
+* Customizable template.
 * Secure integration with Twilio for sending messages.
 * Seamless integration with the CommerceTools platform.
 
-## Supported features
-
-Currently this application supports only sending order confirmation messages via Whatsapp
+Note : Currently this application supports only sending order confirmation messages via Whatsapp
