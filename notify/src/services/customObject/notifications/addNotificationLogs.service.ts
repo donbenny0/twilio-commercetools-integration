@@ -33,10 +33,10 @@ export const addNotificationLog = async (channel: string = 'whatsapp', success: 
         const log: NotificationLog = {
             channel: channel,
             status: success ? 'sent' : 'failed',
-            logs: [{
+            logs: {
                 message: success ? 'Notified' : error?.message || error?.toString() || 'Unknown error',
                 statusCode: error instanceof CustomError ? error.statusCode : success ? 200 : 500,
-            }],
+            },
             resourceType: resourceType,
             recipient: channel === 'whatsapp' ? await getRecipientFromOrder(pubSubDecodedMessage, 'whatsapp') : 'Unknown user'
         };

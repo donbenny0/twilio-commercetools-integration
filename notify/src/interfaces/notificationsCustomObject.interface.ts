@@ -1,7 +1,7 @@
 export interface NotificationLog {
     channel: string;
     status: 'sent' | 'failed';
-    logs: Logs[];
+    logs: Logs;
     resourceType: string;
     recipient: string;
 }
