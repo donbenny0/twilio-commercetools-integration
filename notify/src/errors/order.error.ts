@@ -27,3 +27,8 @@ export class InvalidOrderResponseError extends CustomError {
         super(500, `The order response structure is invalid or missing required fields.`);
     }
 }
+export class InvalidOrderState extends CustomError {
+    constructor() {
+        super(400, `Invalid order state!`);
+    }
+}

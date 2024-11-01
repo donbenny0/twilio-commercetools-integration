@@ -22,7 +22,7 @@ const sendWhatsAppMessage = async (order: Order) => {
 
     try {
         // Message body
-        const messageBody = generateMessage(order);
+        const messageBody = await generateMessage(order);
 
         // Send the message
         const response = await client.messages.create({

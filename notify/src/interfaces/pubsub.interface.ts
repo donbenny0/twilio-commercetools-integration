@@ -3,6 +3,7 @@ export interface PubSubEncodedMessage {
 }
 
 export interface PubSubDecodedData {
+    id: string;
     orderId: string;
     orderState: string;
 }

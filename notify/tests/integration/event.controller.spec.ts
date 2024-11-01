@@ -1,14 +1,11 @@
 import { Request, Response } from 'express';
 import { post } from '../../src/controllers/event.controller';
 import { getOrder } from '../../src/repository/orders/getOrder.repository';
-import sendWhatsAppMessage from '../../src/utils/twilio.utils';
 import { decodePubSubData } from '../../src/utils/helpers.utils';
 import { PubSubDecodedData } from '../../src/interfaces/pubsub.interface';
 import { OrderNotFoundError } from '../../src/errors/order.error';
-import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../../src/errors/twilio.error';
 import { MissingPubSubMessageDataError } from '../../src/errors/pubsub.error';
 import CustomError from '../../src/errors/custom.error';
-
 // Mock modules
 jest.mock('../../src/repository/orders/getOrder.repository');
 jest.mock('../../src/utils/twilio.utils', () => ({

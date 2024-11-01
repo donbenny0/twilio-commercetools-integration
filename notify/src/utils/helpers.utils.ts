@@ -4,6 +4,8 @@ import { MissingPubSubMessageDataError, Base64DecodingError, JsonParsingError } 
 import { Order } from '@commercetools/platform-sdk';
 import { GeneralError, InvalidPlaceholder } from '../errors/helpers.errors';
 import CustomError from '../errors/custom.error';
+import { transformMessageBodyCustomObject } from '../services/customObject/messageBody/transformMessageObject.service';
+import { MessageBodyCustomObject } from '../interfaces/messageBodyCustomObject.interface';
 
 // Helper function to decode base64 and parse JSON
 const decodeAndParseData = (data: string): PubSubDecodedData => {
@@ -13,6 +15,7 @@ const decodeAndParseData = (data: string): PubSubDecodedData => {
         const parsedData: PubSubDecodedData = JSON.parse(decodedData);
 
         return {
+            id: parsedData.id,
             orderId: parsedData.orderId,
             orderState: parsedData.orderState
         };
@@ -40,10 +43,26 @@ export const decodePubSubData = (pubSubMessage: PubSubEncodedMessage): PubSubDec
     return decodeAndParseData(pubSubMessage.data);
 };
 
+
+// generate random key
+export const generateRandomKey = (): string => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const length = 32;
+    
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+    }
+    return result;
+};
+
+
 // Generate custom messageBody
-export const generateMessage = (data: Order): string => {
-    const defaultMessage = "Dear *{{shippingAddress.firstName}}*,\n\nThank you for your order! We're excited to let you know that your order has been confirmed. 🛒🎉\n\nWe'll notify you once it's shipped. Feel free to reach out if you have any questions.\n\nThank you for shopping with us!"
-    const template = process.env.CUSTOM_MESSAGE_TEMPLATE || defaultMessage;
+export const generateMessage = async (data: Order): Promise<string> => {
+    const defaultMessage = "Hello,\n\nYour order has been confirmed!.\nThank you"
+    const customObjectMessageBody: MessageBodyCustomObject | null = await transformMessageBodyCustomObject("messageBody", "msg-body-key-constant-whatsapp")
+    const template = customObjectMessageBody?.message || process.env.CUSTOM_MESSAGE_TEMPLATE || defaultMessage;
 
     const extractValues = (obj: Order, pathString: string): any[] => {
         const segments: string[] = [];
