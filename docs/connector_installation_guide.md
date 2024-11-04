@@ -122,7 +122,7 @@ Hello {{shippingAddress.firstName}}, Your order #{{id}} has been confirmed!
 * **Mandatory Fields**: Ensure that all placeholders are populated with valid data from the order response to avoid sending incomplete messages.
 * **Character Limits**: Consider WhatsApp's character limits (typically 4096 characters for messages) to ensure the message does not get truncated.
 * **Dynamic Data**: Ensure the order object is fully populated with the necessary attributes (e.g., `shippingAddress`, `id`, `totalPrice`) before generating the message.
-* **Supported resource**: Currently, this application supports only the order resource. Please refer to the [order](https://docs.commercetools.com/api/projects/orders#order) resource and its attributes for more details.
+* **Supported resource**: Currently, this application supports only the order resource. Please refer [CommerceTools official documentation](https://docs.commercetools.com/api/projects/orders#order) for order resource and its attributes for more details.
 
 ## Supported services
 
