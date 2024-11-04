@@ -7,4 +7,3 @@ coverage
 .vscode
 build/
 .env
-public/
