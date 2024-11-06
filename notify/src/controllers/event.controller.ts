@@ -8,24 +8,21 @@ import { resourceHandler } from '../services/messaging/resourceHandler.service';
 dotenv.config();
 
 
-
-export const post = async (request: Request, response: Response): Promise<Response> => {
+export const post = async (request: Request, response: Response): Promise<Response | void> => {
   const pubSubMessage = request.body.message;
   const pubSubDecodedMessage = decodePubSubData(pubSubMessage);
+
   try {
     // Fetch the order using commercetools
     const resourceData: any = await resourceHandler(pubSubDecodedMessage);
 
     // Send messages
     await messageHandler(resourceData);
-    await addNotificationLog('whatsapp', true, 'notifications', pubSubDecodedMessage)
+    await addNotificationLog('whatsapp', true, pubSubDecodedMessage);
     return response.status(200).send('Message sent successfully');
-    
+
   } catch (error: any) {
-    await addNotificationLog('whatsapp', false, 'notifications', pubSubDecodedMessage, error)
-    if (error instanceof CustomError) {
-      throw error;
-    }
-    throw new CustomError(500, error);
+    await addNotificationLog('whatsapp', false, pubSubDecodedMessage, error);
+    return response.status(error instanceof CustomError ? error.statusCode as number : 500).send(error.message);
   }
 };

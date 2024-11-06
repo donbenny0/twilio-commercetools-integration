@@ -26,10 +26,10 @@ export const transformOrder = async (decodedMessage: Record<string, any>): Promi
         }
         // Handle other API errors
         if (error?.message) {
-            throw new FetchOrderError(`Failed to fetch order: ${error.message}`);
+            throw new FetchOrderError(decodedMessage.orderId);
         }
         // Generic error fallback
-        throw new FetchOrderError('An unexpected error occurred while fetching the order');
+        throw new FetchOrderError(decodedMessage.orderId);
     }
 }
 
