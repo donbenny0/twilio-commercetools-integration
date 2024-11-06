@@ -1,37 +1,34 @@
 import { Request, Response } from 'express';
 import { post } from '../../src/controllers/event.controller';
-import { getOrder } from '../../src/repository/orders/getOrder.repository';
 import { decodePubSubData } from '../../src/utils/helpers.utils';
-import { PubSubDecodedData } from '../../src/interfaces/pubsub.interface';
-import { OrderNotFoundError } from '../../src/errors/order.error';
-import { MissingPubSubMessageDataError } from '../../src/errors/pubsub.error';
+import { addNotificationLog } from '../../src/services/customObject/notifications/addNotificationLogs.service';
+import { messageHandler } from '../../src/services/messaging/messageHandler.service';
+import { resourceHandler } from '../../src/services/messaging/resourceHandler.service';
 import CustomError from '../../src/errors/custom.error';
+
 // Mock modules
-jest.mock('../../src/repository/orders/getOrder.repository');
-jest.mock('../../src/utils/twilio.utils', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
 jest.mock('../../src/utils/helpers.utils');
+jest.mock('../../src/services/customObject/notifications/addNotificationLogs.service');
+jest.mock('../../src/services/messaging/messageHandler.service');
+jest.mock('../../src/services/messaging/resourceHandler.service');
 // Mock environment variable reading
 jest.mock('../../src/utils/config.utils.ts', () => ({
-    readConfiguration: jest.fn().mockReturnValue({
-        CTP_CLIENT_ID: "client-id",
-        CTP_CLIENT_SECRET: "client-secret",
-        CTP_PROJECT_KEY: "project-key",
-        CTP_SCOPE: "scope",
-        CTP_REGION: "region"
-    })
+  readConfiguration: jest.fn().mockReturnValue({
+      CTP_CLIENT_ID: "6CgfaNUyYB3NuCpcJyCMR2F7",
+      CTP_CLIENT_SECRET: "qO_kB4yKFPO6kYqGQcKQQbNbLcR7dQM3",
+      CTP_PROJECT_KEY: "orders-notifications",
+      CTP_SCOPE: "manage_project:orders-notifications",
+      CTP_REGION: "europe-west1.gcp"
+  })
 }));
 jest.mock('../../src/utils/twilio.utils', () => ({
-    readConfiguration: jest.fn().mockReturnValue({
-        TWILIO_ACCOUNT_SID: 'sid',
-        TWILIO_AUTH_TOKEN: 'auth-token',
-        TWILIO_FROM_NUMBER: 'from-number',
-        CUSTOM_MESSAGE_TEMPLATE:"Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
-    })
+  readConfiguration: jest.fn().mockReturnValue({
+      TWILIO_ACCOUNT_SID: '6CgfaNUyYB3NuCpcJyCMR2F7',
+      TWILIO_AUTH_TOKEN: '842adb84f0c9337238b54de67e964603',
+      TWILIO_FROM_NUMBER: '+14155238886',
+      CUSTOM_MESSAGE_TEMPLATE:"Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
+  })
 }));
-
 describe('Event Controller Integration Tests', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
@@ -40,7 +37,7 @@ describe('Event Controller Integration Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockRequest = {
       body: {
         message: {
@@ -58,65 +55,48 @@ describe('Event Controller Integration Tests', () => {
     };
   });
 
-
-  describe('Error scenarios', () => {
-    test('should return 400 for non-confirmed order state', async () => {
+  describe('Successful scenarios', () => {
+    test('should return 200 and send message successfully', async () => {
       // Arrange
-      const mockDecodedData: PubSubDecodedData = {
+      const mockDecodedData = {
         orderId: 'mockOrderId',
-        orderState: 'Processing'
+        orderState: 'Confirmed'
       };
+      const mockResourceData = { id: 'mockOrderId', shippingAddress: { mobile: '1234567890' } };
+
       (decodePubSubData as jest.Mock).mockReturnValue(mockDecodedData);
+      (resourceHandler as jest.Mock).mockResolvedValue(mockResourceData);
+      (messageHandler as jest.Mock).mockResolvedValue(undefined);
+      (addNotificationLog as jest.Mock).mockResolvedValue(undefined);
 
       // Act
       await post(mockRequest as Request, mockResponse as Response);
 
       // Assert
-      expect(mockStatus).toHaveBeenCalledWith(400);
-      expect(mockSend).toHaveBeenCalledWith('Invalid order state');
+      expect(mockStatus).toHaveBeenCalledWith(200);
+      expect(mockSend).toHaveBeenCalledWith('Message sent successfully');
+      expect(addNotificationLog).toHaveBeenCalledWith('whatsapp', true, 'notifications', mockDecodedData);
     });
+  });
 
-    test('should handle missing PubSub message data', async () => {
+  describe('Error scenarios', () => {
+    test('should handle errors during message sending and return CustomError', async () => {
       // Arrange
-      mockRequest.body.message.data = undefined;
-      (decodePubSubData as jest.Mock).mockImplementation(() => {
-        throw new MissingPubSubMessageDataError();
-      });
-
-      // Act & Assert
-      await expect(post(mockRequest as Request, mockResponse as Response))
-        .rejects
-        .toThrow(MissingPubSubMessageDataError);
-    });
-
-    test('should handle order not found error', async () => {
-      // Arrange
-      const mockDecodedData: PubSubDecodedData = {
-        orderId: 'nonExistentOrder',
+      const mockDecodedData = {
+        orderId: 'mockOrderId',
         orderState: 'Confirmed'
       };
+      const mockResourceData = { id: 'mockOrderId', shippingAddress: { mobile: '1234567890' } };
+
       (decodePubSubData as jest.Mock).mockReturnValue(mockDecodedData);
-      (getOrder as jest.Mock).mockRejectedValue(new OrderNotFoundError('nonExistentOrder'));
-
-      // Act & Assert
-      await expect(post(mockRequest as Request, mockResponse as Response))
-        .rejects
-        .toThrow(OrderNotFoundError);
-    });
-
-    test('should handle unexpected errors with CustomError', async () => {
-      // Arrange
-      (decodePubSubData as jest.Mock).mockImplementation(() => {
-        throw new Error('Unexpected error');
+      (resourceHandler as jest.Mock).mockResolvedValue(mockResourceData);
+      (messageHandler as jest.Mock).mockImplementation(() => {
+        throw new Error('Message handler failed');
       });
 
       // Act & Assert
-      await expect(post(mockRequest as Request, mockResponse as Response))
-        .rejects
-        .toThrow(CustomError);
-      await expect(post(mockRequest as Request, mockResponse as Response))
-        .rejects
-        .toHaveProperty('statusCode', 500);
+      await expect(post(mockRequest as Request, mockResponse as Response)).rejects.toThrow(CustomError);
+      expect(addNotificationLog).toHaveBeenCalledWith('whatsapp', false, 'notifications', mockDecodedData, expect.any(Error));
     });
   });
 });

@@ -1,6 +1,6 @@
-import sendWhatsAppMessage from './twilio.utils';
-import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../errors/twilio.error';
+import { PhoneNumberValidationError } from '../errors/twilio.error';
 import { Order } from '@commercetools/platform-sdk';
+import { messageHandler } from '../services/messaging/messageHandler.service';
 
 jest.mock('twilio', () => {
     return jest.fn().mockImplementation(() => {
@@ -27,7 +27,7 @@ describe('twilio.utils.ts', () => {
     } as any;
 
     it('should send WhatsApp message successfully', async () => {
-        const response = await sendWhatsAppMessage(orderMock);
+        const response = await messageHandler(orderMock);
         expect(response).toEqual({ sid: 'mockSid' });
     });
 
@@ -37,7 +37,7 @@ describe('twilio.utils.ts', () => {
             shippingAddress: { mobile: null }, // or invalid format
         } as any;
 
-        await expect(sendWhatsAppMessage(invalidOrderMock)).rejects.toThrow(PhoneNumberValidationError);
+        await expect(messageHandler(invalidOrderMock)).rejects.toThrow(PhoneNumberValidationError);
     });
 
     // Add more tests for edge cases...

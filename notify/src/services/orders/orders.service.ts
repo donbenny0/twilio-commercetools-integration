@@ -4,12 +4,12 @@ import { getOrder } from "../../repository/orders/getOrder.repository";
 import CustomError from "../../errors/custom.error";
 import { FetchOrderError, InvalidOrderResponseError, InvalidOrderState, OrderNotFoundError } from "../../errors/order.error";
 
-export const transformOrder = async (decodedMessage: PubSubDecodedData): Promise<Order> => {
+export const transformOrder = async (decodedMessage: Record<string, any>): Promise<Record<string, any>> => {
     try {
         if (decodedMessage.orderState !== "Confirmed") {
             throw new InvalidOrderState();
         }
-        const order: Order | null = await getOrder(decodedMessage.id);
+        const order: Order | null = await getOrder(decodedMessage.orderId);
         // Validate response
         if (!order) {
             throw new InvalidOrderResponseError();
@@ -34,7 +34,7 @@ export const transformOrder = async (decodedMessage: PubSubDecodedData): Promise
     }
 }
 
-export const getRecipientFromOrder = async (decodedMessage: PubSubDecodedData, channel: string): Promise<string> => {
+export const getRecipientFromOrder = async (decodedMessage: Record<string, any>, channel: string): Promise<string> => {
     try {
         const order: Order | null = await getOrder(decodedMessage.orderId);
 

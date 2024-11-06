@@ -1,6 +1,7 @@
 
-import { getOrder } from './getOrder.repository';
+import { Order } from '@commercetools/platform-sdk';
 import { OrderNotFoundError, FetchOrderError } from '../../errors/order.error';
+import { transformOrder } from './orders.service';
 
 // Mock the entire module
 jest.mock('../../client/create.client', () => ({
@@ -27,19 +28,34 @@ describe('getOrder.repository.ts', () => {
     });
 
     it('should fetch order by ID', async () => {
-        const order = await getOrder('123');
+        const orderMock: Order = {
+            id: '123',
+            shippingAddress: { firstName: "jhon", mobile: '+1234567890' },
+            // Add other properties as needed...
+        } as any;
+        const order = await transformOrder(orderMock);
         expect(order).toEqual({ id: '123', state: 'Confirmed' });
     });
 
     it('should throw OrderNotFoundError if order does not exist', async () => {
+        const orderMock: Order = {
+            id: '123',
+            shippingAddress: { firstName: "jhon", mobile: '+1234567890' },
+            // Add other properties as needed...
+        } as any;
         mockExecute.mockRejectedValue({ statusCode: 404 });
 
-        await expect(getOrder('invalidId')).rejects.toThrow(OrderNotFoundError);
+        await expect(transformOrder(orderMock)).rejects.toThrow(OrderNotFoundError);
     });
 
     it('should throw FetchOrderError for other errors', async () => {
+        const orderMock: Order = {
+            id: '123',
+            shippingAddress: { firstName: "jhon", mobile: '+1234567890' },
+            // Add other properties as needed...
+        } as any;
         mockExecute.mockRejectedValue(new Error('Some other error'));
 
-        await expect(getOrder('123')).rejects.toThrow(FetchOrderError);
+        await expect(transformOrder(orderMock)).rejects.toThrow(FetchOrderError);
     });
 });

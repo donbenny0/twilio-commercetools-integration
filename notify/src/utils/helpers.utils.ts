@@ -1,24 +1,19 @@
 import { PubSubDecodedData, PubSubEncodedMessage } from '../interfaces/pubsub.interface';
 import { logger } from './logger.utils';
 import { MissingPubSubMessageDataError, Base64DecodingError, JsonParsingError } from '../errors/pubsub.error';
-import { Order } from '@commercetools/platform-sdk';
 import { GeneralError, InvalidPlaceholder } from '../errors/helpers.errors';
 import CustomError from '../errors/custom.error';
 import { transformMessageBodyCustomObject } from '../services/customObject/messageBody/transformMessageObject.service';
 import { MessageBodyCustomObject } from '../interfaces/messageBodyCustomObject.interface';
 
 // Helper function to decode base64 and parse JSON
-const decodeAndParseData = (data: string): PubSubDecodedData => {
+const decodeAndParseData = (data: string): object => {
     try {
         // Decode base64 and parse JSON in a single block
         const decodedData = Buffer.from(data, 'base64').toString().trim();
-        const parsedData: PubSubDecodedData = JSON.parse(decodedData);
+        const parsedData = JSON.parse(decodedData);
 
-        return {
-            id: parsedData.id,
-            orderId: parsedData.orderId,
-            orderState: parsedData.orderState
-        };
+        return parsedData;
     } catch (error) {
         // Check if it's a decoding or parsing error
         if (error instanceof SyntaxError) {
@@ -32,7 +27,7 @@ const decodeAndParseData = (data: string): PubSubDecodedData => {
 };
 
 // Process the event data
-export const decodePubSubData = (pubSubMessage: PubSubEncodedMessage): PubSubDecodedData => {
+export const decodePubSubData = (pubSubMessage: PubSubEncodedMessage): object => {
     // Check if the message has data to decode
     if (!pubSubMessage.data) {
         logger.error('Missing data field in the Pub/Sub message');
@@ -49,7 +44,7 @@ export const generateRandomKey = (): string => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const length = 32;
-    
+
     for (let i = 0; i < length; i++) {
         const randomIndex = Math.floor(Math.random() * characters.length);
         result += characters.charAt(randomIndex);
@@ -59,12 +54,12 @@ export const generateRandomKey = (): string => {
 
 
 // Generate custom messageBody
-export const generateMessage = async (data: Order): Promise<string> => {
+export const generateMessage = async (data: object): Promise<string> => {
     const defaultMessage = "Hello,\n\nYour order has been confirmed!.\nThank you"
     const customObjectMessageBody: MessageBodyCustomObject | null = await transformMessageBodyCustomObject("messageBody", "msg-body-key-constant-whatsapp")
     const template = customObjectMessageBody?.message || process.env.CUSTOM_MESSAGE_TEMPLATE || defaultMessage;
 
-    const extractValues = (obj: Order, pathString: string): any[] => {
+    const extractValues = (obj: object, pathString: string): any[] => {
         const segments: string[] = [];
         const wildcardPositions: (boolean | number)[] = [];
 
