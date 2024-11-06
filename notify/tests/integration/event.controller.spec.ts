@@ -13,21 +13,21 @@ jest.mock('../../src/services/messaging/messageHandler.service');
 jest.mock('../../src/services/messaging/resourceHandler.service');
 // Mock environment variable reading
 jest.mock('../../src/utils/config.utils.ts', () => ({
-  readConfiguration: jest.fn().mockReturnValue({
-      CTP_CLIENT_ID: "6CgfaNUyYB3NuCpcJyCMR2F7",
-      CTP_CLIENT_SECRET: "qO_kB4yKFPO6kYqGQcKQQbNbLcR7dQM3",
-      CTP_PROJECT_KEY: "orders-notifications",
-      CTP_SCOPE: "manage_project:orders-notifications",
-      CTP_REGION: "europe-west1.gcp"
-  })
+    readConfiguration: jest.fn().mockReturnValue({
+        CTP_CLIENT_ID: "client-id",
+        CTP_CLIENT_SECRET: "client-secret",
+        CTP_PROJECT_KEY: "project-key",
+        CTP_SCOPE: "scope",
+        CTP_REGION: "region"
+    })
 }));
 jest.mock('../../src/utils/twilio.utils', () => ({
-  readConfiguration: jest.fn().mockReturnValue({
-      TWILIO_ACCOUNT_SID: '6CgfaNUyYB3NuCpcJyCMR2F7',
-      TWILIO_AUTH_TOKEN: '842adb84f0c9337238b54de67e964603',
-      TWILIO_FROM_NUMBER: '+14155238886',
-      CUSTOM_MESSAGE_TEMPLATE:"Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
-  })
+    readConfiguration: jest.fn().mockReturnValue({
+        TWILIO_ACCOUNT_SID: 'sid',
+        TWILIO_AUTH_TOKEN: 'auth-token',
+        TWILIO_FROM_NUMBER: 'from-number',
+        CUSTOM_MESSAGE_TEMPLATE:"Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
+    })
 }));
 describe('Event Controller Integration Tests', () => {
   let mockRequest: Partial<Request>;
