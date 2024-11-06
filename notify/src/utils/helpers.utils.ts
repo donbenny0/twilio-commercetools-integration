@@ -1,4 +1,4 @@
-import { PubSubDecodedData, PubSubEncodedMessage } from '../interfaces/pubsub.interface';
+import {PubSubEncodedMessage } from '../interfaces/pubsub.interface';
 import { logger } from './logger.utils';
 import { MissingPubSubMessageDataError, Base64DecodingError, JsonParsingError } from '../errors/pubsub.error';
 import { GeneralError, InvalidPlaceholder } from '../errors/helpers.errors';

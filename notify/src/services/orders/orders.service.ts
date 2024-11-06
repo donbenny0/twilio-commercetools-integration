@@ -1,5 +1,4 @@
 import { Order } from "@commercetools/platform-sdk";
-import { PubSubDecodedData } from "../../interfaces/pubsub.interface";
 import { getOrder } from "../../repository/orders/getOrder.repository";
 import CustomError from "../../errors/custom.error";
 import { FetchOrderError, InvalidOrderResponseError, InvalidOrderState, OrderNotFoundError } from "../../errors/order.error";

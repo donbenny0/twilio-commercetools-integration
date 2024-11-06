@@ -1,6 +1,6 @@
 import twilio, { Twilio } from 'twilio';
 import { logger } from './logger.utils';
-import { PhoneNumberValidationError, WhatsAppMessageSendError } from '../errors/twilio.error';
+import { PhoneNumberValidationError, MessageSendError } from '../errors/twilio.error';
 import { Order } from '@commercetools/platform-sdk';
 import { generateMessage } from './helpers.utils';
 
@@ -34,7 +34,7 @@ const sendMessage = async (resource: object, recipient: string) => {
         return response;
     } catch (error) {
         logger.error(`Error sending WhatsApp message: ${error}`);
-        throw new WhatsAppMessageSendError(recipient, error);
+        throw new MessageSendError(recipient, error);
     }
 }
 

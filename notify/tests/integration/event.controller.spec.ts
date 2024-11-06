@@ -13,22 +13,33 @@ jest.mock('../../src/services/messaging/messageHandler.service');
 jest.mock('../../src/services/messaging/resourceHandler.service');
 // Mock environment variable reading
 jest.mock('../../src/utils/config.utils.ts', () => ({
-    readConfiguration: jest.fn().mockReturnValue({
-        CTP_CLIENT_ID: "client-id",
-        CTP_CLIENT_SECRET: "client-secret",
-        CTP_PROJECT_KEY: "project-key",
-        CTP_SCOPE: "scope",
-        CTP_REGION: "region"
-    })
+  readConfiguration: jest.fn().mockReturnValue({
+      CTP_CLIENT_ID: "XXXXXXXXXXXXXXXXXXXXXXXX",
+      CTP_CLIENT_SECRET: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      CTP_PROJECT_KEY: "test-scope",
+      CTP_SCOPE: "manage_project:test-scope",
+      CTP_REGION: "europe-west1.gcp"
+  })
 }));
-jest.mock('../../src/utils/twilio.utils', () => ({
-    readConfiguration: jest.fn().mockReturnValue({
-        TWILIO_ACCOUNT_SID: 'sid',
-        TWILIO_AUTH_TOKEN: 'auth-token',
-        TWILIO_FROM_NUMBER: 'from-number',
-        CUSTOM_MESSAGE_TEMPLATE:"Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
-    })
+
+// Mock Twilio client
+const mockTwilioClient = {
+  messages: {
+      create: jest.fn().mockResolvedValue({})
+  }
+};
+
+jest.mock('../../src/utils/twilio.utils.ts', () => ({
+  readConfiguration: jest.fn().mockReturnValue({
+      TWILIO_ACCOUNT_SID: 'XXXXXXXXXXXXXXXXXXXXXXXX',
+      TWILIO_AUTH_TOKEN: 'test-auth-token',
+      TWILIO_FROM_NUMBER: 'test-number',
+      CUSTOM_MESSAGE_TEMPLATE: "Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
+  }),
+  __esModule: true,
+  default: jest.fn().mockImplementation((_accountSid: string, _authToken: string) => mockTwilioClient)
 }));
+
 describe('Event Controller Integration Tests', () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
