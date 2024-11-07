@@ -41,8 +41,7 @@ export const addNotificationLog = async (channel: string = 'whatsapp', success: 
             recipient: channel === 'whatsapp' ? await getRecipientFromOrder(pubSubDecodedMessage, 'whatsapp') : 'Unknown user'
         };
 
-        const key = generateRandomKey();
-        await createCustomObject('notifications', key, log);
+        await createCustomObject('notifications', pubSubDecodedMessage.id, log);
     } catch (error) {
         logger.error(`Error while adding notification log: ${error instanceof Error ? error.message : String(error)}`);
     }

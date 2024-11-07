@@ -9,13 +9,9 @@ import { logger } from '../utils/logger.utils';
 dotenv.config();
 
 
-export const post = async (request: Request, response: Response): Promise<Response | void> => {
-  logger.info('Received PubSub request body:', JSON.stringify(request.body));
-  logger.info('Received PubSub request message:', JSON.stringify(request.body.message));  
+export const post = async (request: Request, response: Response): Promise<Response | void> => { 
   const pubSubMessage = request.body.message;
   const pubSubDecodedMessage = decodePubSubData(pubSubMessage);
-  logger.info('Received PubSub pubSubDecodedMessage:', pubSubDecodedMessage);  
-
 
   try {
     // Fetch the order using commercetools
