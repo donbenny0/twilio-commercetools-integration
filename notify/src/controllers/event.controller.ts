@@ -14,6 +14,8 @@ export const post = async (request: Request, response: Response): Promise<Respon
   logger.info('Received PubSub request message:', JSON.stringify(request.body.message));  
   const pubSubMessage = request.body.message;
   const pubSubDecodedMessage = decodePubSubData(pubSubMessage);
+  logger.info('Received PubSub pubSubDecodedMessage:', pubSubDecodedMessage);  
+
 
   try {
     // Fetch the order using commercetools
