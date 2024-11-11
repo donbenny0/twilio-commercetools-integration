@@ -10,10 +10,9 @@ import { createApiRoot } from '../../client/create.client';
  * @throws {InvalidOrderResponseError} If the response is invalid
  */
 export async function getOrder(orderId: string) {
-  let apiRootInstance;
   
   // Initialize API root with error handling
-  apiRootInstance = createApiRoot();
+  const apiRootInstance = createApiRoot();
   
   // Fetch the order by ID
   const response = await apiRootInstance

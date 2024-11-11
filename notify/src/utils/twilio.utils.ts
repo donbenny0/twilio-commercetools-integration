@@ -1,7 +1,6 @@
 import twilio, { Twilio } from 'twilio';
 import { logger } from './logger.utils';
 import { PhoneNumberValidationError, MessageSendError } from '../errors/twilio.error';
-import { Order } from '@commercetools/platform-sdk';
 import { generateMessage } from './helpers.utils';
 
 // Twilio configuration

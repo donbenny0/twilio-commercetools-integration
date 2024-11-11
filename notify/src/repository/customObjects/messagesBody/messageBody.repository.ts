@@ -1,4 +1,4 @@
-import { CustomObject, CustomObjectPagedQueryResponse } from '@commercetools/platform-sdk';
+import { CustomObject } from '@commercetools/platform-sdk';
 import { createApiRoot } from '../../../client/create.client';
 import CustomError from '../../../errors/custom.error';
 

@@ -3,16 +3,12 @@ import { MessageBodyCustomObject } from "../../../interfaces/messageBodyCustomOb
 import { getCustomObjectsByContainerAndChannel } from "../../../repository/customObjects/messagesBody/messageBody.repository";
 
 export const transformMessageBodyCustomObject = async (container: string, key: string): Promise<MessageBodyCustomObject | null> => {
-    try {
-        const messageBodyResponse: CustomObject = await getCustomObjectsByContainerAndChannel(container, key);
-        if (!messageBodyResponse) {
-            return null;
-        }
-        return {
-            channel: messageBodyResponse.value.channel,
-            message: messageBodyResponse.value.message
-        };
-    } catch (error) {
-        throw error;
+    const messageBodyResponse: CustomObject = await getCustomObjectsByContainerAndChannel(container, key);
+    if (!messageBodyResponse) {
+        return null;
     }
+    return {
+        channel: messageBodyResponse.value.channel,
+        message: messageBodyResponse.value.message
+    };
 }

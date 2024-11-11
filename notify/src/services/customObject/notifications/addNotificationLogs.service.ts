@@ -1,6 +1,5 @@
 import CustomError from "../../../errors/custom.error"
 import { NotificationLog } from "../../../interfaces/notificationsCustomObject.interface"
-import { PubSubDecodedData } from "../../../interfaces/pubsub.interface"
 import { createCustomObject } from "../../../repository/customObjects/notifications/createCustomObject.repository"
 import { generateRandomKey } from "../../../utils/helpers.utils"
 import { logger } from "../../../utils/logger.utils"
@@ -28,7 +27,7 @@ import { getRecipientFromOrder } from "../../orders/orders.service"
  * The log is stored in custom objects with a random key
  */
 
-export const addNotificationLog = async (channel: string = 'whatsapp', success: boolean = true, pubSubDecodedMessage: Record<string, any>, error?: any): Promise<void> => {
+export const addNotificationLog = async (channel: string, success: boolean, pubSubDecodedMessage: Record<string, any>, error?: any): Promise<void> => {
     try {
         const log: NotificationLog = {
             channel: channel,
@@ -41,7 +40,8 @@ export const addNotificationLog = async (channel: string = 'whatsapp', success: 
             recipient: channel === 'whatsapp' ? await getRecipientFromOrder(pubSubDecodedMessage, 'whatsapp') : 'Unknown user'
         };
 
-        await createCustomObject('notifications', pubSubDecodedMessage.id, log);
+        const key = pubSubDecodedMessage.id || generateRandomKey();
+        await createCustomObject('notifications', key, log);
     } catch (error) {
         logger.error(`Error while adding notification log: ${error instanceof Error ? error.message : String(error)}`);
     }

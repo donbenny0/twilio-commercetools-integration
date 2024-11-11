@@ -5,7 +5,6 @@ import CustomError from '../errors/custom.error';
 import { addNotificationLog } from '../services/customObject/notifications/addNotificationLogs.service';
 import { messageHandler } from '../services/messaging/messageHandler.service';
 import { resourceHandler } from '../services/messaging/resourceHandler.service';
-import { logger } from '../utils/logger.utils';
 dotenv.config();
 
 
