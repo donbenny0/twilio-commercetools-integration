@@ -2,10 +2,9 @@
    <img src="./notify/public/notify_logo.jpg" />
 </div>
 
-
 ## Notify
 
-This connector is designed to automate real-time order status notifications for customers. It listens for changes to order statuses in CommerceTools and automatically sends WhatsApp notifications to customers via [Twilio ](https://www.twilio.com/)when an order confirmed.
+This connector is designed to automate real-time order status notifications for customers. It listens for changes to order statuses in CommerceTools and automatically sends WhatsApp notifications to customers via [Twilio ](https://www.twilio.com/)when an order confirmed.Also logs the the notifications send.
 
 ## Instructions
 
