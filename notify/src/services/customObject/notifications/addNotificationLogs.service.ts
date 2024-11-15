@@ -27,17 +27,32 @@ import { getRecipientFromOrder } from "../../orders/orders.service"
  * The log is stored in custom objects with a random key
  */
 
-export const addNotificationLog = async (channel: string, success: boolean, pubSubDecodedMessage: Record<string, any>, error?: any): Promise<void> => {
+export const addNotificationLog = async (
+    channel: string,
+    success: boolean,
+    pubSubDecodedMessage: Record<string, any>,
+    error?: any
+): Promise<void> => {
     try {
+        const errorMessage = success
+            ? 'Notified!'
+            : error?.message || error?.toString() || 'Unknown error';
+
+        const statusCode = error instanceof CustomError
+            ? error.statusCode
+            : success ? 200 : 500;
+
         const log: NotificationLog = {
             channel: channel,
             status: success ? 'sent' : 'failed',
             logs: {
-                message: success ? 'Notified!' : error?.message || error?.toString() || 'Unknown error',
-                statusCode: error instanceof CustomError ? error.statusCode : success ? 200 : 500,
+                message: errorMessage,
+                statusCode: statusCode,
             },
             resourceType: pubSubDecodedMessage.resource.typeId,
-            recipient: channel === 'whatsapp' ? await getRecipientFromOrder(pubSubDecodedMessage, 'whatsapp') : 'Unknown user'
+            recipient: channel === 'whatsapp'
+                ? await getRecipientFromOrder(pubSubDecodedMessage, 'whatsapp')
+                : 'Unknown user'
         };
 
         const key = pubSubDecodedMessage.id || generateRandomKey();
