@@ -14,27 +14,27 @@ jest.mock('../../src/services/messaging/resourceHandler.service');
 // Mock environment variable reading
 jest.mock('../../src/utils/config.utils.ts', () => ({
   readConfiguration: jest.fn().mockReturnValue({
-      CTP_CLIENT_ID: "XXXXXXXXXXXXXXXXXXXXXXXX",
-      CTP_CLIENT_SECRET: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-      CTP_PROJECT_KEY: "test-scope",
-      CTP_SCOPE: "manage_project:test-scope",
-      CTP_REGION: "europe-west1.gcp"
+    CTP_CLIENT_ID: "XXXXXXXXXXXXXXXXXXXXXXXX",
+    CTP_CLIENT_SECRET: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    CTP_PROJECT_KEY: "test-scope",
+    CTP_SCOPE: "manage_project:test-scope",
+    CTP_REGION: "europe-west1.gcp"
   })
 }));
 
 // Mock Twilio client
 const mockTwilioClient = {
   messages: {
-      create: jest.fn().mockResolvedValue({})
+    create: jest.fn().mockResolvedValue({})
   }
 };
 
 jest.mock('../../src/utils/twilio.utils.ts', () => ({
   readConfiguration: jest.fn().mockReturnValue({
-      TWILIO_ACCOUNT_SID: 'XXXXXXXXXXXXXXXXXXXXXXXX',
-      TWILIO_AUTH_TOKEN: 'test-auth-token',
-      TWILIO_FROM_NUMBER: 'test-number',
-      CUSTOM_MESSAGE_TEMPLATE: "Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
+    TWILIO_ACCOUNT_SID: 'XXXXXXXXXXXXXXXXXXXXXXXX',
+    TWILIO_AUTH_TOKEN: 'test-auth-token',
+    TWILIO_FROM_NUMBER: 'test-number',
+    CUSTOM_MESSAGE_TEMPLATE: "Hello {{shippingAddress.firstName}},\n\n your order #{{id}} has been confirmed! Total rates: {{taxedPrice.taxPortions[*].rate}}."
   }),
   __esModule: true,
   default: jest.fn().mockImplementation((_accountSid: string, _authToken: string) => mockTwilioClient)
@@ -86,7 +86,7 @@ describe('Event Controller Integration Tests', () => {
       // Assert
       expect(mockStatus).toHaveBeenCalledWith(200);
       expect(mockSend).toHaveBeenCalledWith('Message sent successfully');
-      expect(addNotificationLog).toHaveBeenCalledWith('whatsapp', true, 'notifications', mockDecodedData);
+      expect(addNotificationLog).toHaveBeenCalledWith('whatsapp', true, mockDecodedData);
     });
   });
 
@@ -95,19 +95,31 @@ describe('Event Controller Integration Tests', () => {
       // Arrange
       const mockDecodedData = {
         orderId: 'mockOrderId',
-        orderState: 'Confirmed'
+        orderState: 'Open',
       };
       const mockResourceData = { id: 'mockOrderId', shippingAddress: { mobile: '1234567890' } };
 
       (decodePubSubData as jest.Mock).mockReturnValue(mockDecodedData);
       (resourceHandler as jest.Mock).mockResolvedValue(mockResourceData);
-      (messageHandler as jest.Mock).mockImplementation(() => {
-        throw new Error('Message handler failed');
-      });
 
-      // Act & Assert
-      await expect(post(mockRequest as Request, mockResponse as Response)).rejects.toThrow(CustomError);
-      expect(addNotificationLog).toHaveBeenCalledWith('whatsapp', false, 'notifications', mockDecodedData, expect.any(Error));
+      // Make sure the mock explicitly throws an error
+      const customError = new CustomError(500, 'Message handler failed');
+      (messageHandler as jest.Mock).mockRejectedValue(customError);
+
+      // Mock response methods
+      const statusMock = jest.fn().mockReturnThis();
+      const sendMock = jest.fn();
+      (mockResponse.status as jest.Mock).mockImplementation(statusMock);
+      (mockResponse.send as jest.Mock).mockImplementation(sendMock);
+
+      // Act
+      await post(mockRequest as Request, mockResponse as Response);
+
+      // Assert
+      expect(statusMock).toHaveBeenCalledWith(500);
+      expect(sendMock).toHaveBeenCalledWith('Message handler failed');
+      expect(addNotificationLog).toHaveBeenCalledWith('whatsapp', false, mockDecodedData, customError);
     });
   });
+
 });
