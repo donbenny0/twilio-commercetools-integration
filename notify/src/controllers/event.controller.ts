@@ -13,7 +13,7 @@ export const post = async (request: Request, response: Response): Promise<Respon
   const pubSubDecodedMessage = decodePubSubData(pubSubMessage);
 
   try {
-    // Fetch the order using commercetools
+    // Fetch the order using Commercetools
     const resourceData: any = await resourceHandler(pubSubDecodedMessage);
 
     // Send messages
