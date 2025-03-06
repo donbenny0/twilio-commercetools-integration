@@ -52,9 +52,8 @@ export const addNotificationLog = async (
             resourceType: pubSubDecodedMessage.resource.typeId,
             recipient: channel === 'whatsapp'
                 ? await getRecipientFromOrder(pubSubDecodedMessage, 'whatsapp')
-                : 'Unknown user'
+                : 'Unknown recipient'
         };
-
         const key = pubSubDecodedMessage.id || generateRandomKey();
         await createCustomObject('notifications', key, log);
     } catch (error) {

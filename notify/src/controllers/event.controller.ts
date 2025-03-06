@@ -15,7 +15,9 @@ export const post = async (request: Request, response: Response): Promise<Respon
   try {
     // Fetch the order using Commercetools
     if (!subscribedResources.includes(pubSubDecodedMessage.resource.typeId)) {
-      await addNotificationLog('whatsapp', false, pubSubDecodedMessage, 'Resource not subscribed');
+      
+      await addNotificationLog('whatsapp', false, pubSubDecodedMessage, `The resource ${pubSubDecodedMessage.resource.typeId} is not subscribed`);
+      return response.status(409).send(`The resource ${pubSubDecodedMessage.resource.typeId} is not subscribed`);
     }
 
     const resourceData: any = await resourceHandler(pubSubDecodedMessage);
