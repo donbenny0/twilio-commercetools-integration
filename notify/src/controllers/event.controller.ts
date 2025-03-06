@@ -6,14 +6,18 @@ import { addNotificationLog } from '../services/customObject/notifications/addNo
 import { messageHandler } from '../services/messaging/messageHandler.service';
 import { resourceHandler } from '../services/messaging/resourceHandler.service';
 dotenv.config();
+const subscribedResources = ['order'];
 
-
-export const post = async (request: Request, response: Response): Promise<Response | void> => { 
+export const post = async (request: Request, response: Response): Promise<Response | void> => {
   const pubSubMessage = request.body.message;
-  const pubSubDecodedMessage = decodePubSubData(pubSubMessage);
+  const pubSubDecodedMessage: any = decodePubSubData(pubSubMessage);
 
   try {
     // Fetch the order using Commercetools
+    if (!subscribedResources.includes(pubSubDecodedMessage.resource.typeId)) {
+      await addNotificationLog('whatsapp', false, pubSubDecodedMessage, 'Resource not subscribed');
+    }
+
     const resourceData: any = await resourceHandler(pubSubDecodedMessage);
 
     // Send messages
