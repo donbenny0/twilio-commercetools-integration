@@ -41,6 +41,24 @@ async function createSubscription(
     .execute();
 }
 
+export async function createMessageBody(
+  apiRoot: ByProjectKeyRequestBuilder
+) {
+  await apiRoot.customObjects()
+    .post({
+      body: {
+        container: "messageBody",
+        key: "msg-body-key-constant-whatsapp",
+        value: {
+          channel: "whatsapp",
+          message: "Your order has been placed successfully."
+        }
+      }
+    })
+    .execute();
+
+}
+
 export async function deleteOrderSubscription(
   apiRoot: ByProjectKeyRequestBuilder
 ): Promise<void> {
@@ -69,3 +87,4 @@ export async function deleteOrderSubscription(
       .execute();
   }
 }
+

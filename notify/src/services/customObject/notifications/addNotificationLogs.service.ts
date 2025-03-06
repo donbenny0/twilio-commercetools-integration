@@ -1,5 +1,5 @@
 import CustomError from "../../../errors/custom.error"
-import { NotificationLog } from "../../../interfaces/notificationsCustomObject.interface"
+import { NotificationLog } from "../../../interface/notificationsCustomObject.interface"
 import { createCustomObject } from "../../../repository/customObjects/notifications/createCustomObject.repository"
 import { generateRandomKey } from "../../../utils/helpers.utils"
 import { logger } from "../../../utils/logger.utils"

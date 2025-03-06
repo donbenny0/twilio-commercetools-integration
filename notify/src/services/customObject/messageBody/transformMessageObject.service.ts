@@ -1,5 +1,5 @@
 import { CustomObject } from "@commercetools/platform-sdk";
-import { MessageBodyCustomObject } from "../../../interfaces/messageBodyCustomObject.interface";
+import { MessageBodyCustomObject } from "../../../interface/messageBodyCustomObject.interface";
 import { getCustomObjectsByContainerAndChannel } from "../../../repository/customObjects/messagesBody/messageBody.repository";
 
 export const transformMessageBodyCustomObject = async (container: string, key: string): Promise<MessageBodyCustomObject | null> => {

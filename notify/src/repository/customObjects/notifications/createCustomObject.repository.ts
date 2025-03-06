@@ -1,6 +1,6 @@
 import { createApiRoot } from '../../../client/create.client';
 import CustomError from '../../../errors/custom.error';
-import { NotificationLog } from '../../../interfaces/notificationsCustomObject.interface';
+import { NotificationLog } from '../../../interface/notificationsCustomObject.interface';
 import { logger } from '../../../utils/logger.utils';
 
 /**
