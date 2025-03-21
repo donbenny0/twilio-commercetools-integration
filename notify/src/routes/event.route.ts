@@ -7,8 +7,6 @@ const eventRouter: Router = Router();
 
 eventRouter.post('/', async (req, res, next) => {
   logger.info('Event message received');
-  logger.info('Event message request');
-  logger.info(JSON.stringify(req))
   logger.info('Event message body');
   logger.info(JSON.stringify(req.body))
   try {
