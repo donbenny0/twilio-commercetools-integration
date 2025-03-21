@@ -7,6 +7,10 @@ const eventRouter: Router = Router();
 
 eventRouter.post('/', async (req, res, next) => {
   logger.info('Event message received');
+  logger.info('Event message request');
+  logger.info(req)
+  logger.info('Event message body');
+  logger.info(req.body)
   try {
     await post(req, res);
   } catch (error) {
